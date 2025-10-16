@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discord Activity Tracker</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+/* Весь CSS здесь */
+body { margin:0; font-family: 'Segoe UI', sans-serif; background:#23272A; color:#fff; }
+.hidden { display:none; }
+/* Добавь сюда весь CSS из твоего файла */
+</style>
+</head>
+<body>
+<div id="app">
+    <!-- Страницы будут создаваться через JS -->
+</div>
+
+<script>
+// Весь JS здесь
+(function(){
+    const app = document.getElementById('app');
+
+    // Данные для примера
+    const mockUsers = [
+        { name: "User1", status: "online", activity: "Playing Minecraft" },
+        { name: "User2", status: "online", activity: "Listening to Spotify" }
+    ];
+    const mockChannels = [
+        { name: "general", messages: 42 },
+        { name: "memes", messages: 128 }
+    ];
+
+    // Создаём Login Page
+    const loginPage = document.createElement('div');
+    loginPage.id = 'loginPage';
+    loginPage.innerHTML = `
+        <h1>Discord Activity Tracker</h1>
+        <button id="loginBtn">Войти через Discord</button>
+    `;
+    app.appendChild(loginPage);
+
+    // Создаём Dashboard Page
+    const dashboardPage = document.createElement('div');
+    dashboardPage.id = 'dashboardPage';
+    dashboardPage.classList.add('hidden');
+    dashboardPage.innerHTML = `
+        <h1>Панель управления</h1>
+        <button id="logoutBtn">Выйти</button>
+        <div id="stats">
+            <p>Всего участников: <span id="totalMembers"></span></p>
+            <p>Онлайн: <span id="onlineMembers"></span></p>
+            <p>В голосовых: <span id="voiceMembers"></span></p>
+            <p>Сообщений сегодня: <span id="totalMessages"></span></p>
+        </div>
+        <div>
+            <h2>Активные участники</h2>
+            <div id="activeUsersList"></div>
+        </div>
+        <div>
+            <h2>Активные каналы</h2>
+            <div id="activeChannelsList"></div>
+        </div>
+        <canvas id="activityChart" width="400" height="300"></canvas>
+    `;
+    app.appendChild(dashboardPage);
+
+    // DOM Elements
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const totalMembers = document.getElementById('totalMembers');
+    const onlineMembers = document.getElementById('onlineMembers');
+    const voiceMembers = document.getElementById('voiceMembers');
+    const totalMessages = document.getElementById('totalMessages');
+    const activeUsersList = document.getElementById('activeUsersList');
+    const activeChannelsList = document.getElementById('activeChannelsList');
+
+    // Логика входа
+    loginBtn.addEventListener('click', () => {
+        loginPage.classList.add('hidden');
+        dashboardPage.classList.remove('hidden');
+        updateStats();
+        populateUsers();
+        populateChannels();
+        initChart();
+    });
+
+    logoutBtn.addEventListener('click', () => {
+        dashboardPage.classList.add('hidden');
+        loginPage.classList.remove('hidden');
+    });
+
+    function updateStats() {
+        totalMembers.textContent = 150;
+        onlineMembers.textContent = 47;
+        voiceMembers.textContent = 12;
+        totalMessages.textContent = 342;
+    }
+
+    function populateUsers() {
+        activeUsersList.innerHTML = '';
+        mockUsers.forEach(u => {
+            const div = document.createElement('div');
+            div.textContent = `${u.name} - ${u.activity} (${u.status})`;
+            activeUsersList.appendChild(div);
+        });
+    }
+
+    function populateChannels() {
+        activeChannelsList.innerHTML = '';
+        mockChannels.forEach(c => {
+            const div = document.createElement('div');
+            div.textContent = `${c.name} - ${c.messages} сообщений`;
+            activeChannelsList.appendChild(div);
+        });
+    }
+
+    function initChart() {
+        const ctx = document.getElementById('activityChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],
+                datasets: [{
+                    label: 'Активные пользователи',
+                    data: [12,19,15,17,22,18,25],
+                    borderColor: 'rgba(88,101,242,1)',
+                    backgroundColor: 'rgba(88,101,242,0.2)',
+                    fill: true,
+                    tension:0.3
+                }]
+            }
+        });
+    }
+})();
+</script>
+</body>
+</html>
